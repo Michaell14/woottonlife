@@ -1,24 +1,23 @@
 import logo from './logo.svg';
 import './App.css';
+import Header from "./components/Header"
+import { Box, Flex, Text, HStack } from '@chakra-ui/react';
+import {Link} from "react-router-dom";
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>      
+      
+      <Flex justify={"center"} align={"center"} opacity={1} id={"maininfo"}>
+        <Box w={"500px"}>
+          <Text fontSize={"5xl"}>Learn more about Wootton</Text>
+          <Text fontSize={"xl"}>This is a listing of General wootton activities. Discover what to do before, during, and after
+          school with #WoottonLife</Text>
+        </Box>
+        <img src="/friends.svg" width={"30%"}></img>
+      </Flex>
+    </>
   );
 }
 
