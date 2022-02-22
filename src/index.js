@@ -8,6 +8,7 @@ import Header from "./components/Header"
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import Discover from "./Discover";
 import Dashboard from "./Dashboard";
+import Profile from "./Profile";
 
 ReactDOM.render(
   
@@ -20,6 +21,7 @@ ReactDOM.render(
           <Route path="/" element={<App />} />
           <Route path="/discover" element={<Discover />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </BrowserRouter>
     </React.StrictMode>

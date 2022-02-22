@@ -1,4 +1,4 @@
-import { Box, HStack, Flex, Text, Button, FormControl, FormLabel, Input,UnorderedList, ListItem, Textarea  } from '@chakra-ui/react';
+import { Box, HStack, Flex, Text, Button, FormControl, FormLabel, Input,Center, Textarea  } from '@chakra-ui/react';
 import {
     useDisclosure,
     Modal,
@@ -12,13 +12,12 @@ import {
   import { Select } from '@chakra-ui/react'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { initializeApp } from "firebase/app";
 import React, { useState } from 'react';
-import { getFirestore, collection, getDocs, addDoc } from "firebase/firestore";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
 import CardGrid from "./components/CardGrid"
 import { getAuth } from "firebase/auth";
 import { db } from "./config";
-
+import { AddIcon } from '@chakra-ui/icons';
 
 const auth = getAuth();
 
@@ -29,7 +28,9 @@ function Dashboard(){
     return(
         <>  
         
-        <Button onClick={onOpenAdd} colorScheme={"red"} variant="outline" >Add Activity</Button>
+        <Center>
+            <Button onClick={onOpenAdd} colorScheme={"red"} variant="outline" mb={10} ><AddIcon/>&nbsp;Add Activity</Button>
+        </Center>
         <Modal isOpen={isOpenAdd} onClose={onCloseAdd} size={"lg"}>
                 <ModalOverlay />
                 <ModalContent>
@@ -69,7 +70,7 @@ function Dashboard(){
 
                     <FormControl mt={4}>
                         <FormLabel>Description</FormLabel>
-                        <Textarea placeholder='Description' id="AddDescription"/>
+                        <Textarea placeholder='Description' id="AddDescription" h={"120px"}/>
                     </FormControl>
 
                     <FormControl mt={4}>

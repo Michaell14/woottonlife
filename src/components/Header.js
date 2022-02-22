@@ -1,4 +1,4 @@
-import { Box, Text, Flex, Button, InputGroup, InputRightElement, Input,useDisclosure, Image, FormControl, FormLabel, HStack, useRadioGroup, useRadio } from '@chakra-ui/react';
+import { Box, Text, Flex, Button, Menu, MenuButton, IconButton, MenuItem, MenuList, InputGroup, Avatar, InputRightElement, Input,useDisclosure, Image, FormControl, FormLabel, HStack, useRadioGroup, useRadio } from '@chakra-ui/react';
 import {
     Modal,
     ModalOverlay,
@@ -9,11 +9,8 @@ import {
     ModalCloseButton,
   } from '@chakra-ui/react'
 import React, {useState} from 'react'; 
-import { Link } from "react-router-dom";
-import Avator from "boring-avatars";
-  // Import the functions you need from the SDKs you need
 import SignUp from "../SignUp";
-import { getAuth, updateProfile , createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification  } from "firebase/auth";
+import { getAuth, updateProfile, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification  } from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -50,7 +47,7 @@ function Header(){
 
             <Flex justify={"space-between"} m={10}>
                 
-                {isAuth && <Text id="displayName">{displayName}</Text>}
+                {isAuth && <a href="/"><Text id="displayName">{displayName}</Text></a>}
                 <Flex>
                     <a href="/discover"><Button>Discover</Button></a>
                     {isAuth && <a href="/dashboard"><Button>Dashboard</Button></a>}
@@ -59,8 +56,40 @@ function Header(){
                 <Box>
                     {!isAuth && <Button onClick={onOpenSignUp} variant="outline"  borderWidth={"2px"} colorScheme="green" id="SignUp">Sign Up</Button>}
                     {!isAuth && <Button onClick={onOpenLogin} colorScheme={"green"} id="Login">Log in</Button>}
-                    {isAuth && <Image src={profileSrc}/>}
-                    {isAuth && <Button onClick={logOut} id="Logout" >Sign Out</Button>}
+                   
+                    {isAuth &&  
+                    <Menu offset={[0, 40]}>
+
+                      
+                      <MenuButton
+                        as={IconButton}
+                        borderRadius={"50%"}
+                        variant={"unstyled"}
+                        size={"xs"}
+                        aria-label='Options'
+                        icon={<Avatar src={profileSrc} size={"md"}/>}
+                        _focus={{
+                          boxShadow:
+                            '0 0 0 0',
+                        }}
+                      />
+
+                      <MenuList>
+                        <a href={"./profile"}>
+                          <MenuItem>
+                            
+                            Edit Profile
+                                          
+                          </MenuItem>
+                        </a>
+                        <MenuItem onClick={logOut}>
+                          Sign Out
+                        </MenuItem>
+                      </MenuList>
+                    </Menu> }
+
+
+                    {/*{isAuth && <Button onClick={logOut}>Sign Out</Button>}*/}
 
                     <Modal isOpen={isOpenSignUp} onClose={onCloseSignUp} size={"lg"}>
                         <ModalOverlay />

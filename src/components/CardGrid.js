@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, HStack, Flex, Text, Grid, GridItem, Button } from '@chakra-ui/react';
+import { Flex, Text, Grid, GridItem, Button } from '@chakra-ui/react';
 import useFirestore from "../hooks/useFirestore";
 import { InfoOutlineIcon } from "@chakra-ui/icons";
 
@@ -17,15 +17,15 @@ function CardGrid(props){
                             <Text>LOGO</Text>
                             <Text>Heart</Text>
                         </Flex>
-                        <Text fontSize="xl" fontWeight={"bold"} my={5}>{doc.title}</Text>
-                        <Flex my={5} justify={"space-between"}>
+                        <Text fontSize="xl" fontWeight={"bold"} mt={5}>{doc.title}</Text>
+                        <Flex mb={5} justify={"space-between"}>
                             <Text fontSize={"sm"}>{doc.time}</Text>
                             <Text fontSize={"sm"}>{doc.date}</Text>
                         </Flex>
                         <Text maxH={"120px"} overflowY={"auto"} id={"description"}>{doc.description}</Text>
                         <Flex flexWrap={"wrap"} mt={5}>
                             {doc.tags.split(", ").map(tag => (
-                               <Text bg={"#30292F"} key={tag} color="#E2E8F0" fontSize={"sm"} h={"fit-content"} mr={3} mb={2} p={"2.8px 7px"} borderRadius={"3px"}>{tag}</Text> 
+                               <Text bg={"#30292F"} key={tag} color="#E2E8F0" fontSize={"12px"} h={"fit-content"} mr={3} mb={2} p={"2.6px 6.6px"} borderRadius={"3px"}>{tag}</Text> 
                             ))}
                         
                         </Flex>

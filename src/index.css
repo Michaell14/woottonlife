@@ -11,22 +11,21 @@
   border: 1px solid #718096;
 }
 
-#description::-webkit-scrollbar{
-  width: 4px;
+#description::-webkit-scrollbar, #AddDescription::-webkit-scrollbar{
+  width: 5px;
 }
 
-#description::-webkit-scrollbar-track {
+#description::-webkit-scrollbar-track, #AddDescription::-webkit-scrollbar-track {
   background-color: rgb(255, 255, 255, 0);
 }
 
-
-#description::-webkit-scrollbar-thumb {
+#description::-webkit-scrollbar-thumb, #AddDescription::-webkit-scrollbar-thumb {
   border-radius: 10px;
   background-color: #A0AEC0;
 }
 
-#description{
-  
+#description, #AddDescription{
   margin-right: -5px;
   scrollbar-gutter: stable;
 }
+
