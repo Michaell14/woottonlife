@@ -5,7 +5,7 @@ import { Box, Text, Flex, Button, Menu, MenuButton, IconButton, MenuItem, MenuLi
 function Profile(){
     return (
         <>
-            <Text>HELLO TO THE PROFILE</Text>
+            <Text>🅿️</Text>
         </>
     )
 }
