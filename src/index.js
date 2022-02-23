@@ -9,6 +9,7 @@ import { Route, Routes, BrowserRouter } from "react-router-dom";
 import Discover from "./Discover";
 import Dashboard from "./Dashboard";
 import Profile from "./Profile";
+import NotFound from "./NotFound";
 
 ReactDOM.render(
   
@@ -22,6 +23,7 @@ ReactDOM.render(
           <Route path="/discover" element={<Discover />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
+          <Route component={NotFound} />
         </Routes>
       </BrowserRouter>
     </React.StrictMode>

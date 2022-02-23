@@ -47,9 +47,7 @@ function SignUp(){
     
 
     return(
-        <Button onClick={signUpWithEmail} colorScheme='green' mr={3}>
-            Submit
-        </Button>
+        <a href="/"><Button onClick={signUpWithEmail} colorScheme='green' mr={3}>Submit</Button></a>
     )
 }
 

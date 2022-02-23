@@ -10,7 +10,7 @@ import {
   } from '@chakra-ui/react'
 import React, {useState} from 'react'; 
 import SignUp from "../SignUp";
-import { getAuth, updateProfile, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification  } from "firebase/auth";
+import { getAuth, updateProfile, signInWithEmailAndPassword, signOut, onAuthStateChanged  } from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -82,9 +82,7 @@ function Header(){
                                           
                           </MenuItem>
                         </a>
-                        <MenuItem onClick={logOut}>
-                          Sign Out
-                        </MenuItem>
+                        <a href="/"><MenuItem onClick={logOut}>Sign Out</MenuItem></a>
                       </MenuList>
                     </Menu> }
 
@@ -180,9 +178,7 @@ function Header(){
                             </ModalBody>
 
                             <ModalFooter>
-                                <Button onClick={login} colorScheme='green' mr={3}>
-                                Submit
-                                </Button>
+                            <a href="/"><Button onClick={login} colorScheme='green' mr={3}>Submit</Button></a>
                                 <Button onClick={onCloseLogin}>Cancel</Button>
                             </ModalFooter>
                         </ModalContent>
@@ -202,7 +198,6 @@ function login(event){
     .then((userCredential) => {
       // Signed in 
         const user = userCredential.user;
-        document.getElementById("displayName").innerHTML="Welcome " + user.displayName;
         console.log(user.uid);
     })
     .catch((error) => {
