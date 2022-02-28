@@ -8,8 +8,7 @@
   color: #a7b9cf;
   border-radius: 5px;
   padding: 5px;
-  background-color: #2D3748;
-  border: 1px solid #718096;
+  border: 1px solid #71809642;
 }
 
 #description::-webkit-scrollbar, #AddDescription::-webkit-scrollbar{

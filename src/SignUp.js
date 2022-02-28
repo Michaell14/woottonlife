@@ -1,6 +1,6 @@
 import { Box, Flex, Button } from '@chakra-ui/react';
 import React from 'react'; 
-import { getAuth, updateProfile , createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification  } from "firebase/auth";
+import { getAuth, updateProfile , createUserWithEmailAndPassword  } from "firebase/auth";
 import { auth } from "./config";
 
 function SignUp(){

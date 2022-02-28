@@ -1,4 +1,4 @@
-import { Box, HStack, Flex, Text, Button, FormControl, FormLabel, Input,Center, Textarea  } from '@chakra-ui/react';
+import { Box, HStack, Flex, useColorModeValue, Select, Text, Button, FormControl, FormLabel, Input,Center, Textarea, background  } from '@chakra-ui/react';
 import {
     useDisclosure,
     Modal,
@@ -9,21 +9,22 @@ import {
     ModalBody,
     ModalCloseButton,
   } from '@chakra-ui/react';
-  import { Select } from '@chakra-ui/react'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import React, { useState } from 'react';
-import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
 import CardGrid from "./components/CardGrid"
 import { getAuth } from "firebase/auth";
 import { db } from "./config";
 import { AddIcon } from '@chakra-ui/icons';
+import FileUpload from "./FileUpload";
 
 const auth = getAuth();
 
 function Dashboard(){
     const { isOpen: isOpenAdd, onOpen: onOpenAdd, onClose: onCloseAdd } = useDisclosure()
     const [startDate, setStartDate] = useState(null);
+    const datePickerBg = useColorModeValue('#F7FAFC', '#3A506B');
 
     return(
         <>  
@@ -31,18 +32,21 @@ function Dashboard(){
         <Center>
             <Button onClick={onOpenAdd} colorScheme={"red"} variant="outline" mb={10} ><AddIcon/>&nbsp;Add Activity</Button>
         </Center>
+        
         <Modal isOpen={isOpenAdd} onClose={onCloseAdd} size={"lg"}>
+            
                 <ModalOverlay />
                 <ModalContent>
                 <ModalHeader>Add Activity</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody pb={6}>
+
                     <FormControl isRequired>
                         
                         <FormLabel >Activity Name</FormLabel>
                         <Input id="AddName" placeholder='Game Dev. Club'/>
                     </FormControl>
-
+                    
                     <HStack mt={2}>
                         
                         <FormControl isRequired>
@@ -82,11 +86,15 @@ function Dashboard(){
                         <FormLabel>Contact</FormLabel>
                         <Input placeholder='me@gmail.com' id="AddContact"/>
                     </FormControl>
-
+                    
+                    <FormControl mt={4}>
+                        <FormLabel>Activity Icon</FormLabel>
+                        <FileUpload/>
+                    </FormControl>
                 </ModalBody>
 
                 <ModalFooter>
-                    <Button onClick={sendData} colorScheme='green' mr={3} id="AddSubmitBtn">
+                    <Button onClick={sendData} colorScheme='green' pdy={3} mr={3} id="AddSubmitBtn">
                     Submit
                     </Button>
                     <Button onClick={onCloseAdd}>Cancel</Button>
@@ -102,7 +110,6 @@ function Dashboard(){
 
 async function sendData(){
     const userId=auth.currentUser.uid;
-    console.log(userId);
     try {
         const docRef = await addDoc(collection(db, "activities"), {
           title: document.getElementById("AddName").value,

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { Box, Text, Flex, Button, Input,HStack, FormControl, FormLabel,FormHelperText, Textarea, InputRightElement } from '@chakra-ui/react';
+import { Box, Text, Flex, Button, Input,HStack, FormControl, FormLabel,FormHelperText, Textarea } from '@chakra-ui/react';
 import { useColorMode } from '@chakra-ui/react'
 import { auth } from "./config";
 import { getAuth, updateProfile, onAuthStateChanged  } from "firebase/auth";
