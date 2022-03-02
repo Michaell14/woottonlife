@@ -18,13 +18,54 @@ import { getAuth } from "firebase/auth";
 import { db } from "./config";
 import { AddIcon } from '@chakra-ui/icons';
 import FileUpload from "./FileUpload";
+import { storage } from "./config";
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const auth = getAuth();
 
 function Dashboard(){
     const { isOpen: isOpenAdd, onOpen: onOpenAdd, onClose: onCloseAdd } = useDisclosure()
     const [startDate, setStartDate] = useState(null);
-    const datePickerBg = useColorModeValue('#F7FAFC', '#3A506B');
+    const [toSend, setFile] = useState(null);
+
+    async function sendData(){
+        const userId=auth.currentUser.uid;
+        
+        try {
+
+            const storageRef = ref(storage, toSend.name);
+
+            // 'file' comes from the Blob or File API
+            uploadBytes(storageRef, toSend).then(() => {
+                getDownloadURL(ref(storage, toSend.name))
+                .then((url) => {
+                    
+                    addDoc(collection(db, "activities"), {
+                        title: document.getElementById("AddName").value,
+                        time: document.getElementById("AddTime").value,
+                        date: document.getElementById("AddDate").value,
+                        tags: document.getElementById("AddTags").value,
+                        description: document.getElementById("AddDescription").value,
+                        organizer: document.getElementById("AddOrganizer").value,
+                        contact: document.getElementById("AddContact").value,
+                        uid: userId,
+                        src: url
+                    })
+                })
+                .catch((error) => {
+                    // Handle any errors
+                    console.log(error);
+                });
+            });
+        
+            
+         
+          } catch (e) {
+            console.error("Error adding document: ", e);
+          }     
+    }
+    
+
 
     return(
         <>  
@@ -89,7 +130,7 @@ function Dashboard(){
                     
                     <FormControl mt={4}>
                         <FormLabel>Activity Icon</FormLabel>
-                        <FileUpload/>
+                        <FileUpload setFile={setFile}/>
                     </FormControl>
                 </ModalBody>
 
@@ -106,27 +147,6 @@ function Dashboard(){
         </>
         
     )
-}
-
-async function sendData(){
-    const userId=auth.currentUser.uid;
-    try {
-        const docRef = await addDoc(collection(db, "activities"), {
-          title: document.getElementById("AddName").value,
-          time: document.getElementById("AddTime").value,
-          date: document.getElementById("AddDate").value,
-          tags: document.getElementById("AddTags").value,
-          description: document.getElementById("AddDescription").value,
-          organizer: document.getElementById("AddOrganizer").value,
-          contact: document.getElementById("AddContact").value,
-          uid: userId
-        }).then(() =>
-         {
-             alert("Submitted")
-         });
-      } catch (e) {
-        console.error("Error adding document: ", e);
-      }     
 }
 
 

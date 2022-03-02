@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, HStack, Flex, Menu, Grid, GridItem, MenuButton, IconButton, useColorModeValue, Select, Text, Button, FormControl, FormLabel, Input,MenuList, Textarea, MenuItem  } from '@chakra-ui/react';
+import { Box, Image, HStack, Flex, Menu, Grid, GridItem, MenuButton, IconButton, useColorModeValue, Select, Text, Button, FormControl, FormLabel, Input,MenuList, Textarea, MenuItem  } from '@chakra-ui/react';
 import useFirestore from "../hooks/useFirestore";
 import { InfoOutlineIcon, SettingsIcon } from "@chakra-ui/icons";
 import {
@@ -16,21 +16,74 @@ import DatePicker from "react-datepicker";
 import FileUpload from "../FileUpload";
 import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
 import {db} from "../config";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+const storage = getStorage();
 
 function CardGrid(props){
     const [startDate, setStartDate] = useState(null);
     const { docs } = useFirestore("activities", props.isDashboard);
     const { isOpen: isOpenAdd, onOpen: onOpenAdd, onClose: onCloseAdd } = useDisclosure()
     const cardBg = useColorModeValue('#C7E8F3', '#3A506B')
+    const [toSend, setFile] = useState(null);
+
+    async function editData(){
+        const id=document.getElementById("EditSubmitBtn").value;
+    
+        var toSubmit=[];
+        var ids=["Time", "Description", "Name", "Organizer", "Tags", "Contact", "SubmitBtn"];
+        for (let i=0; i<ids.length; i++){
+            toSubmit.push(document.getElementById("Edit"+ids[i]).value)
+        }
+        setDoc(doc(db, "activities", id), {
+            time: toSubmit[0],
+            description: toSubmit[1],
+            title: toSubmit[2],
+            organizer: toSubmit[3],
+            tags: toSubmit[4],
+            contact: toSubmit[5]
+        }, { merge: true }).then(() =>{
+            console.log(toSend.name)
+        })
+
+        try {
+
+            const storageRef = ref(storage, toSend.name);
+
+            // 'file' comes from the Blob or File API
+            uploadBytes(storageRef, toSend).then(() => {
+                getDownloadURL(ref(storage, toSend.name))
+                .then((url) => {
+                
+                    setDoc(doc(db, "activities", id), {
+                        src: url
+                    }, { merge: true }).then(() =>{
+                        console.log(toSend.name)
+                    })
+                })
+                .catch((error) => {
+                    // Handle any errors
+                    console.log(error);
+                });
+            });
+        
+            
+         
+          } catch (e) {
+            console.error("Error adding document: ", e);
+          }     
+
+
+    
+    }
 
     return(
         <>
             <Grid templateColumns='repeat(4, 1fr)' gap={10} mx={40}>
                 { docs && docs.map(doc => (
-                    <GridItem className={"card"} w={"100%"} key={doc.id} boxShadow='2xl' h={"fit-content"} maxW={"300px"} bg={cardBg} position="relative" p={5} pb={20} borderRadius={"7px"}>
+                    <GridItem className={"card"} w={"100%"} minW={"260px"} key={doc.id} boxShadow='2xl' h={"fit-content"} maxW={"300px"} bg={cardBg} position="relative" p={5} pb={20} borderRadius={"7px"}>
                         
                         <Flex justify={"space-between"} mx={"5px"}>
-                            <Text>LOGO</Text>
+                            <Image src={doc.src} boxSize='40px' borderRadius={"full"} fallbackSrc='https://s3-us-west-2.amazonaws.com/scorestream-team-profile-pictures/7558/20210401175559_308_mascotOrig.png'/>
                             <Text>❤</Text>
                         </Flex>
                         <Text fontSize="xl" fontWeight={"bold"} mt={5}>{doc.title}</Text>
@@ -126,7 +179,7 @@ function CardGrid(props){
                 
                 <FormControl mt={4}>
                     <FormLabel>Activity Icon</FormLabel>
-                    <FileUpload/>
+                    <FileUpload setFile={setFile}/>
                 </FormControl>
             </ModalBody>
 
@@ -162,26 +215,6 @@ async function fillCardData(id){
     }
 }
 
-async function editData(){
-    const id=document.getElementById("EditSubmitBtn").value;
-
-    var toSubmit=[];
-    var ids=["Time", "Description", "Name", "Organizer", "Tags", "Contact", "SubmitBtn"];
-    for (let i=0; i<ids.length; i++){
-        toSubmit.push(document.getElementById("Edit"+ids[i]).value)
-    }
-
-    // Add a new document in collection "cities"
-    await setDoc(doc(db, "activities", id), {
-        time: toSubmit[0],
-        description: toSubmit[1],
-        title: toSubmit[2],
-        organizer: toSubmit[3],
-        tags: toSubmit[4],
-        contact: toSubmit[5],
-        
-    }, { merge: true });
-}
 
 async function deleteCard(id){
     await deleteDoc(doc(db, "activities", id));

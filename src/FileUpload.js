@@ -1,81 +1,46 @@
 import React, {useEffect, useState} from 'react';
 import { Box, Flex, Text, Input, Image, SliderFilledTrack} from '@chakra-ui/react';
-import {useDropzone} from 'react-dropzone';
+import 'react-dropzone-uploader/dist/styles.css'
+import Dropzone from 'react-dropzone-uploader'
 
-const thumbsContainer = {
-  display: 'flex',
-  flexDirection: 'row',
-  flexWrap: 'wrap',
-  marginTop: 16
-};
+const FileUpload = ( {setFile} ) => {
+  const toast = (innerHTML) => {
+    const el = document.getElementById('toast')
+    el.innerHTML = innerHTML
+    el.className = 'show'
+    setTimeout(() => { el.className = el.className.replace('show', '') }, 3000)
+  }
 
-const thumb = {
-  display: 'inline-flex',
-  borderRadius: 2,
-  border: '1px solid #eaeaea',
-  marginBottom: 8,
-  marginRight: 8,
-  width: 100,
-  height: 100,
-  padding: 4,
-  boxSizing: 'border-box'
-};
+  const getUploadParams = ({setFile}) => {
+    return { url: 'https://httpbin.org/post' }
+  }
 
-const thumbInner = {
-  display: 'flex',
-  minWidth: 0,
-  overflow: 'hidden'
-};
-
-const img = {
-  display: 'block',
-  width: 'auto',
-  height: '100%'
-};
-
-
-function FileUpload(props) {
-  const [files, setFiles] = useState([]);
-  const {getRootProps, getInputProps} = useDropzone({
-    accept: 'image/*',
-    onDropAccepted: acceptedFiles => {
-      setFiles(acceptedFiles.map(file => Object.assign(file, {
-        preview: URL.createObjectURL(file)
-      })));
+  const handleChangeStatus = ({ meta, file }, status) => {
+    if (status === 'headers_received') {
+      toast(`${meta.name} uploaded!`)
+      console.log(file);
+      setFile(file);
+    } else if (status === 'aborted') {
+      alert("There was an error with the file");
     }
-  });
-  
-  const thumbs = files.map(file => (
-    <div style={thumb} key={file.name}>
-      <div style={thumbInner}>
-        <img
-          src={file.preview}
-          style={img}
-        />
-      </div>
-    </div>
-  ));
-
-  useEffect(() => {
-    // Make sure to revoke the data uris to avoid memory leaks
-    files.forEach(file => URL.revokeObjectURL(file.preview));
-  }, [files]);
+  }
 
   return (
     <>
-    <Box>
-      <Flex {...getRootProps({className: 'dropzone'})}>
-        <Input {...getInputProps()} />
-        <Text borderRadius={5} border={"dotted 2px"} borderColor={"#71809642"}>Drag 'n' drop an icon here. For some reason it doesn't show 
-          the preview when you select from the file box
-        </Text>
-      </Flex>
-      <Flex>
-        {thumbs}
-      </Flex>
-    </Box>
+      <div id="toast">Upload</div>
+      <Dropzone
+        getUploadParams={getUploadParams}
+        onChangeStatus={handleChangeStatus}
+        maxFiles={1}
+        inputContent="Drag Files or Click to Browse"
+        styles={{
+          dropzone: { width: 420, height: 140 },
+        }}
+        accept="image/*"
+      />
     </>
-  );
+  )
 }
+
 
 export default FileUpload;
