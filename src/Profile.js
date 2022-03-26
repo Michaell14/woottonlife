@@ -38,7 +38,7 @@ function Profile(){
         <>
             <Flex w={"470px"} mx="auto" flexDirection={"column"} justify="space-between" h={"fit-content"}>
                 
-                <Text as='u' fontSize={"3xl"} >Edit Profile</Text>
+                <Text as='b' fontSize={"3xl"} >Edit Profile</Text>
 
 
                 {isAuth && 
@@ -58,8 +58,8 @@ function Profile(){
                     
                     <FormLabel htmlFor='updatePassword'>Bio</FormLabel>
                     <Flex w={"100%"} justify={"space-between"}>
-                        <Textarea w={"385px"} h={"140px"} lineHeight={"26px"} placeholder='👋Hey, I am...
-🏂My hobbies include...'
+                        <Textarea w={"385px"} h={"140px"} lineHeight={"26px"} placeholder='👋Hey, I am....
+🏂My hobbies include....'
                         />
                         <Button w={"75px"} onClick={updateDisplayName} >Submit</Button>
                     </Flex>

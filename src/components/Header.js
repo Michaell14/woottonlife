@@ -1,4 +1,4 @@
-import { Box, Text, Flex, Button, Menu, MenuButton, IconButton, MenuItem, MenuList, InputGroup, Avatar, InputRightElement, Input,useDisclosure, Image, FormControl, FormLabel, HStack, useRadioGroup, useRadio, AlertDialogBody } from '@chakra-ui/react';
+import { Box, Text, Flex, Center, Button, Menu, MenuButton, IconButton, MenuItem, MenuList, InputGroup, Avatar, InputRightElement, Input,useDisclosure, Image, FormControl, FormLabel, HStack, useRadioGroup, useRadio, AlertDialogBody } from '@chakra-ui/react';
 import {
     Modal,
     ModalOverlay,
@@ -22,7 +22,7 @@ function Header(){
     //Sign up and Login modals
     const { isOpen: isOpenLogin, onOpen: onOpenLogin, onClose: onCloseLogin } = useDisclosure()
     const { isOpen: isOpenSignUp, onOpen: onOpenSignUp, onClose: onCloseSignUp } = useDisclosure()
-    const [isAuth, setIsAuth] = useState(false);
+    const [isAuth, setIsAuth] = useState(true);
     const [showSignUp, setShowSignUp] = useState(false)
     const [showLogin, setShowLogin ] = useState(false);
     const handleClickSignUp = () => setShowSignUp(!showSignUp);
@@ -31,8 +31,9 @@ function Header(){
     const [profileSrc, setProfilePic] = useState();
     
     onAuthStateChanged(auth, (user) => {
+      
+      //Sets the display name when there is a user
       if (user) {
-
         const uid = user.uid;
         setDisplayName(user.displayName);
         setProfilePic(user.photoURL);
@@ -48,18 +49,19 @@ function Header(){
             <Flex justify={"space-between"} m={10}>
                 
                 {isAuth && <a href="/"><Text id="displayName">{displayName}</Text></a>}
-                <Flex>
-                    <a href="/discover"><Button>Discover</Button></a>
-                    {isAuth && <a href="/dashboard"><Button>Dashboard</Button></a>}
-                </Flex>
+                <Center>
+                    <a href="/discover"><Button variant={"outline"} colorScheme={"whatsapp"} mr={6}>Discover</Button></a>
+                    {isAuth && <a href="/dashboard"><Button variant={"outline"} colorScheme={"red"}>Dashboard</Button></a>}
+                </Center>
 
                 <Box>
-                    {!isAuth && <Button onClick={onOpenSignUp} variant="outline"  borderWidth={"2px"} colorScheme="green" id="SignUp">Sign Up</Button>}
-                    {!isAuth && <Button onClick={onOpenLogin} colorScheme={"green"} id="Login">Log in</Button>}
-                   
+                    {!isAuth && 
+                    <Box>
+                      <Button onClick={onOpenSignUp} variant="outline" borderWidth={"2px"} colorScheme="green" mr={5} id="SignUp">Sign Up</Button>
+                      <Button onClick={onOpenLogin} colorScheme={"green"} id="Login">Log in</Button>
+                    </Box>}
                     {isAuth &&  
                     <Menu offset={[0, 40]}>
-
                       
                       <MenuButton
                         as={IconButton}
@@ -71,8 +73,7 @@ function Header(){
                         _focus={{
                           boxShadow:
                             '0 0 0 0',
-                        }}
-                      />
+                        }}/>
 
                       <MenuList>
                         <a href={"./profile"}>

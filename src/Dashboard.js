@@ -57,21 +57,16 @@ function Dashboard(){
                     console.log(error);
                 });
             });
-        
-            
-         
           } catch (e) {
             console.error("Error adding document: ", e);
           }     
     }
-    
-
 
     return(
         <>  
         
         <Center>
-            <Button onClick={onOpenAdd} colorScheme={"red"} variant="outline" mb={10} ><AddIcon/>&nbsp;Add Activity</Button>
+            <Button onClick={onOpenAdd} colorScheme={"linkedin"} variant="outline" mb={10} ><AddIcon/>&nbsp;Add Activity</Button>
         </Center>
         
         <Modal isOpen={isOpenAdd} onClose={onCloseAdd} size={"lg"}>

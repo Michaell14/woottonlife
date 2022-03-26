@@ -70,10 +70,7 @@ function CardGrid(props){
          
           } catch (e) {
             console.error("Error adding document: ", e);
-          }     
-
-
-    
+          }
     }
 
     return(
@@ -99,7 +96,6 @@ function CardGrid(props){
                         </Flex>
                         
                         <Flex position={"absolute"} bottom={5} justify="space-between" w={"85%"}>
-                            <Text>CLUB</Text>
                             {props.isDashboard &&
                             <Menu>
                             <MenuButton
@@ -107,6 +103,9 @@ function CardGrid(props){
                                 aria-label='Options'
                                 icon={<SettingsIcon />}
                                 variant="ghost"
+                                position={"absolute"} 
+                                right={0}
+                                bottom={0}
                             />{/* onOpenAdd */}
                                 <MenuList>
                                     <MenuItem onClick={function(event){ fillCardData(doc.id); onOpenAdd()}} minH='44px'>
