@@ -1,4 +1,4 @@
-import { Box, Text, Flex, Button, Menu, MenuButton, IconButton, MenuItem, MenuList, InputGroup, Avatar, InputRightElement, Input,useDisclosure, Image, FormControl, FormLabel, HStack, useRadioGroup, useRadio } from '@chakra-ui/react';
+import { Box, Text, Flex, Button, Menu, MenuButton, IconButton, MenuItem, MenuList, InputGroup, Avatar, InputRightElement, Input,useDisclosure, Image, FormControl, FormLabel, HStack, useRadioGroup, useRadio, AlertDialogBody } from '@chakra-ui/react';
 import {
     Modal,
     ModalOverlay,
@@ -111,7 +111,7 @@ function Header(){
 
                             <FormControl mt={4} isRequired>
                                 <FormLabel>Email</FormLabel>
-                                <Input id="SignUpEmail" placeholder='WoottonPatriot12' />
+                                <Input id="SignUpEmail" placeholder='WoottonPatriot12@gmail.com' />
                             </FormControl>
 
                             <FormControl mt={4}>
@@ -178,7 +178,7 @@ function Header(){
                             </ModalBody>
 
                             <ModalFooter>
-                            <a href="/"><Button onClick={login} colorScheme='green' mr={3}>Submit</Button></a>
+                            <Button onClick={login} colorScheme='green' mr={3}>Submit</Button>
                                 <Button onClick={onCloseLogin}>Cancel</Button>
                             </ModalFooter>
                         </ModalContent>
@@ -191,7 +191,8 @@ function Header(){
     )
 }
 
-function login(event){
+function login(){
+    alert(1);
     const email = document.getElementById("LoginEmail").value;
     const password = document.getElementById("LoginPassword").value;
     signInWithEmailAndPassword(auth, email, password)

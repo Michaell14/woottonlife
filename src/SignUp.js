@@ -1,4 +1,4 @@
-import { Box, Flex, Button } from '@chakra-ui/react';
+import { Box, Button } from '@chakra-ui/react';
 import React from 'react'; 
 import { getAuth, updateProfile , createUserWithEmailAndPassword  } from "firebase/auth";
 import { auth } from "./config";
@@ -47,7 +47,7 @@ function SignUp(){
     
 
     return(
-        <a href="/"><Button onClick={signUpWithEmail} colorScheme='green' mr={3}>Submit</Button></a>
+        <Button onClick={signUpWithEmail} colorScheme='green' mr={3}>Submit</Button>
     )
 }
 
