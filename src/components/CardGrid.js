@@ -88,7 +88,7 @@ function CardGrid(props){
 
     return(
         <>
-            <Grid templateColumns='repeat(4, 1fr)' gap={10} mx={"65px"}>
+            <Grid templateColumns='repeat(4, 1fr)' gap={10} mx={"65px"} mb={"100px"}>
                 { docs && docs.map(doc => (
 
                     <Box key={doc.id} maxW={'460px'} h={"fit-content"} w={'full'} bg="white" _dark={{bg: 'gray.900'}} p={6}

@@ -47,7 +47,7 @@ class SocialButton extends React.Component{
   
   export default function Footer() {
     return (
-      <Box position={"fixed"} bottom={0} w={"100vw"} bg={useColorModeValue('gray.50', 'gray.900')} color={useColorModeValue('gray.700', 'gray.200')}>
+      <Box position={"fixed"} id="footer" bottom={0} w={"100vw"} bg={useColorModeValue('gray.50', 'gray.900')} color={useColorModeValue('gray.700', 'gray.200')}>
         <Container
           as={Stack}
           maxW={'6xl'}
@@ -56,7 +56,7 @@ class SocialButton extends React.Component{
           spacing={4}
           justify={{ base: 'center', md: 'space-between' }}
           align={{ base: 'center', md: 'center' }}>
-          <Text>© 2022 Woottonlife. All rights reserved</Text>
+          <Text>© 2022 Wootton life. All rights reserved</Text>
           <Stack direction={'row'} spacing={6}>
             <SocialButton label={'Chrome'} href={'https://www2.montgomeryschoolsmd.org/schools/woottonhs/'}>
               <FaChrome />
