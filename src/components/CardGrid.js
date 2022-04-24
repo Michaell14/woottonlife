@@ -222,7 +222,7 @@ function CardGrid(props){
                           </Select>
                       </FormControl>
 
-                <FormControl mt={4}>
+                <FormControl mt={5}>
                     <FormLabel>Tags</FormLabel>
                     <Input placeholder='Programming, Science, English' id="EditTags"/>
                 </FormControl>
