@@ -18,7 +18,6 @@ const FileUpload = ( {setFile} ) => {
   const handleChangeStatus = ({ meta, file }, status) => {
     if (status === 'headers_received') {
       toast(`${meta.name} uploaded!`)
-      console.log(file);
       setFile(file);
     } else if (status === 'aborted') {
       alert("There was an error with the file");
