@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Image, HStack, Flex, Menu, MenuButton, IconButton, Grid, Stack, Avatar, Heading, useColorModeValue, Select, Text, Button, FormControl, FormLabel, Input,MenuList, Textarea, MenuItem  } from '@chakra-ui/react';
 import useFirestore from "../hooks/useFirestore";
-import { InfoOutlineIcon, SettingsIcon } from "@chakra-ui/icons";
+import { InfoOutlineIcon, SettingsIcon, StarIcon } from "@chakra-ui/icons";
 import $ from "jquery"
 import {
     useDisclosure,
@@ -91,7 +91,7 @@ function CardGrid(props){
             <Grid templateColumns='repeat(4, 1fr)' gap={10} mx={"65px"} mb={"100px"}>
                 { docs && docs.map(doc => (
 
-                    <Box key={doc.id} maxW={'460px'} h={"fit-content"} w={'full'} bg="white" _dark={{bg: 'gray.900'}} p={6}
+                    <Box key={doc.id} maxW={'460px'} position={"relative"} minW={"240px"} h={"fit-content"} w={'full'} bg="white" _dark={{bg: 'gray.900'}} p={6}
                         boxShadow={'2xl'}
                         rounded={'md'}
                         overflow={'hidden'}>
@@ -142,8 +142,7 @@ function CardGrid(props){
                             ))}
                         </Flex>
                         </Stack>
-                        <Flex justify={"space-between"} align={"end"}>
-                            
+                            <HStack align={"end"}>
                             <Stack mt={5} direction={'row'} spacing={4} align={'center'}>
                                 <Image
                                     src={doc.profileSrc}
@@ -162,6 +161,7 @@ function CardGrid(props){
                                         aria-label='Options'
                                         icon={<SettingsIcon />}
                                         variant="ghost"
+                                        position={"absolute"} bottom={5} right={5}
                                     />
 
                                     <MenuList>
@@ -173,8 +173,23 @@ function CardGrid(props){
                                         </MenuItem>
                                         
                                     </MenuList>
-                            </Menu>}</Flex>
-
+                            </Menu>}
+                            {/*}
+                            {!props.isDashboard && 
+                                
+                                <Menu>
+                                    <MenuButton
+                                        bg="whiteAlpha"
+                                        as={IconButton}
+                                        aria-label='Options'
+                                        icon={<InfoOutlineIcon />}
+                                    />
+                                    <MenuList>
+                                        <MenuItem>Add to List&nbsp;&nbsp;<StarIcon/></MenuItem>                                   
+                                    </MenuList>
+                                </Menu>
+                            }*/}
+                            </HStack>
                     </Box>
                     
                     ))}
