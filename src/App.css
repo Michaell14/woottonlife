@@ -12,3 +12,7 @@
 #T2{
     font-family: 'Inconsolata', monospace;
 }
+
+.underline{
+    text-decoration: underline #38A169 3.1px;
+}

@@ -121,12 +121,12 @@ function Header(){
 
             <Flex justify={"space-between"} px={"65px"} py={10}>
                 <Flex>
-                  <a href="/"><Text pr={5}>Discover</Text></a>
-                  {isAuth && <a href="/dashboard"><Text pl={5}>Dashboard</Text></a>}
+                  <a href="/"><Text id="discover" pr={5}>Discover</Text></a>
+                  {isAuth && <a href="/dashboard"><Text id="dashboard" pl={5}>Dashboard</Text></a>}
                 </Flex>
 
                 <Flex>
-                    {isAuth && <Button onClick={onOpenAdd} colorScheme={"linkedin"} variant="outline" mr={7}><AddIcon/>&nbsp;Add Activity</Button>}
+                    {isAuth && <Button onClick={onOpenAdd} colorScheme={"green"} variant="outline" mr={7}><AddIcon/>&nbsp;Add Activity</Button>}
                     {!isAuth &&  
                       <Button onClick={onOpenLogin} colorScheme={"green"} id="Login">Log in</Button>}
 
@@ -136,9 +136,8 @@ function Header(){
                         as={IconButton}
                         borderRadius={"50%"}
                         variant={"unstyled"}
-                        size={"xs"}
                         aria-label='Options'
-                        icon={<Avatar src={profileSrc}/>}
+                        icon={<Image src={profileSrc}/>}
                         _focus={{
                           boxShadow:
                             '0 0 0 0',

@@ -1,11 +1,35 @@
 import './App.css';
-import { Box, Text, Button, useDisclosure  } from '@chakra-ui/react';
+import React, {useEffect} from 'react';
+import { Box, Text, Button, useDisclosure, useToast, createStandaloneToast  } from '@chakra-ui/react';
 import CardGrid from "./components/CardGrid";
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton } from '@chakra-ui/react'
+import $ from "jquery";
+import { getCurrentUrl } from 'swup/lib/helpers';
+
+
 
 function App() {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast()
 
-  const { isOpen, onClose } = useDisclosure({ defaultIsOpen: true })
+  useEffect(() => {
+
+    $("#dashboard").removeClass("underline");
+    $("#discover").addClass("underline");
+
+    toast({
+      title: 'Welcome🥰',
+      description: 'This is a listing of General wootton activities, open to everyone. Discover what to do before, during, and even after school at Thomas S. Wootton HS!',
+      duration: 3500,
+      isClosable: true,
+      variant: "subtle",
+      position: "top-right",
+      containerStyle: {
+        width: "450px"
+      }
+    })
+    
+  }, [])
 
   return (
     <Box>

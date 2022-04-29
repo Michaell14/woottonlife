@@ -7,7 +7,6 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { ChakraProvider } from '@chakra-ui/react'
 import Header from "./components/Header"
-import Discover from "./Discover";
 import Dashboard from "./Dashboard";
 import Profile from "./Profile";
 import NotFound from "./NotFound";
@@ -21,7 +20,6 @@ ReactDOM.render(
         <Header/>
           <Routes>
             <Route path="/" element={<App />} />
-            <Route path="/discover" element={<Discover />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/signup" element={<SignUp/>} />
