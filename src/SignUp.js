@@ -1,37 +1,34 @@
 import React from 'react'; 
-import { getAuth, updateProfile , createUserWithEmailAndPassword  } from "firebase/auth";
-import { auth } from "./config";
+import { updateProfile , createUserWithEmailAndPassword  } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore"; 
+import { auth, db } from "./config";
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import $ from "jquery";
-import {
-    Flex,
-    Box,
-    FormControl,
-    FormLabel,
-    Input,
-    InputGroup,
-    HStack,
-    InputRightElement,
-    Stack,
-    Button,
-    Heading,
-    Text,
-    useColorModeValue,
-    Link,
-  } from '@chakra-ui/react';
-
+import { Flex, Box, FormControl, FormLabel, Input, InputGroup, HStack,InputRightElement,Stack,Button,Heading,Text,useColorModeValue} from '@chakra-ui/react';
 
 function SignUp(){
     let navigate = useNavigate();
+    
+    //Creates a new user and adds them to firebase
+    async function addNewUser(uid, firstName, lastName, bio, email, password){
+      await setDoc(doc(db, "users", uid), {
+        firstName: firstName,
+        lastName: lastName,
+        bio: bio,
+        email: email,
+        password: password
+      });
+    }
+    
+    //Signs a new person in with email
     function signUpWithEmail(){
         const firstName = $("#firstName").val();
         const lastName= $("#lastName").val();
         const email =  $("#email").val();
         const password =  $("#password").val();
         
-    
         createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             // Signed in 
@@ -39,12 +36,15 @@ function SignUp(){
     
             updateProfile(user, {
                 displayName: firstName + " " + lastName,
-                photoURL: "https://source.boringavatars.com/marble/40/"+firstName+"%20"+lastName
+                photoURL: "https://source.boringavatars.com/beam/40/"+firstName+"%20"+lastName
 
               }).then(() => {
                 // Update successful
                 $("displayName").html("Welcome " + user.displayName)
                 navigate("/", { replace: true });
+
+                //Adds user
+                addNewUser(user.uid, firstName, lastName, "👋Hey, I am....🏂My hobbies include....", email, password)
               })          
         })
         .catch((error) => {
@@ -135,7 +135,6 @@ function SignUp(){
     </Flex>
         
         </>
-
     )
 }
 

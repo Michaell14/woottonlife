@@ -1,43 +1,35 @@
 import React, { useState } from "react";
-import { Box, Image, HStack, Flex, Menu, MenuButton, IconButton, Grid, Stack, Avatar, Heading, useColorModeValue, Select, Text, Button, FormControl, FormLabel, Input,MenuList, Textarea, MenuItem  } from '@chakra-ui/react';
-import useFirestore from "../hooks/useFirestore";
-import { InfoOutlineIcon, SettingsIcon, StarIcon } from "@chakra-ui/icons";
 import $ from "jquery"
-import {
-    useDisclosure,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalFooter,
-    ModalBody,
-    ModalCloseButton,
-  } from '@chakra-ui/react';
-import {
-    AlertDialog,
-    AlertDialogBody,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogContent,
-    AlertDialogOverlay,
-} from '@chakra-ui/react'
-
 import DatePicker from "react-datepicker";
 import FileUpload from "../FileUpload";
-import { doc, getDoc, setDoc, deleteDoc, documentId } from "firebase/firestore";
 import {db} from "../config";
+
+//import Chakra UI components
+import { Box, Image, HStack, Flex, Menu, MenuButton, IconButton, Grid, Stack, Heading, Select, Text, Button, FormControl, FormLabel, Input,MenuList, Textarea, MenuItem  } from '@chakra-ui/react';
+import { useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton} from '@chakra-ui/react';
+import { AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay, } from '@chakra-ui/react'
+import { SettingsIcon } from "@chakra-ui/icons";
+
+//import firebase libraries
+import useFirestore from "../hooks/useFirestore";
+import { doc, getDoc, setDoc, deleteDoc,collection } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
 const storage = getStorage();
 
 function CardGrid(props){
     const [startDate, setStartDate] = useState(null);
     const [deleteDocId, setDeleteDocId] = useState(null);
     const { docs } = useFirestore("activities", props.isDashboard);
+
+    //Modal disclosures
     const { isOpen: isOpenAdd, onOpen: onOpenAdd, onClose: onCloseAdd } = useDisclosure()
-    const [toSend, setFile] = useState(null);
+    const { isOpen: isOpenProfile, onOpen: onOpenProfile, onClose: onCloseProfile } = useDisclosure()
     const { isOpen: isOpenDeleteDialog, onOpen: onOpenDeleteDialog, onClose: onCloseDeleteDialog } = useDisclosure()
+    const [toSend, setFile] = useState(null);
     const cancelRef = React.useRef()
 
+    //Edits card data
     async function editData(){
         const id=$("#EditSubmitBtn").val();
     
@@ -61,6 +53,8 @@ function CardGrid(props){
         if (toSend==null){
             return;
         }
+
+        //Handles updating the background banner
         try {
 
             const storageRef = ref(storage, toSend.name);
@@ -144,10 +138,29 @@ function CardGrid(props){
                         </Stack>
                             <HStack align={"end"}>
                             <Stack mt={5} direction={'row'} spacing={4} align={'center'}>
-                                <Image
-                                    src={doc.profileSrc}
-                                    alt={'Organizer'}
-                                />
+                                
+
+                                <Menu>
+                                    <MenuButton
+                                        as={IconButton}
+                                        borderRadius={"50%"}
+                                        variant={"unstyled"}
+                                        aria-label='Options'
+                                        icon={<Image src={doc.profileSrc}/>}
+                                        alt={'Organizer'}
+                                        _focus={{
+                                        boxShadow:
+                                            '0 0 0 0',
+                                        }}/>
+
+                                    <MenuList>
+                                        
+                                        <MenuItem>
+                                            <Text onClick={function(){fillProfileInfo(doc.uid); onOpenProfile()}}>View Profile</Text>  
+                                        </MenuItem>
+                                    </MenuList>
+                                    </Menu>
+
                                 <Stack direction={'column'} spacing={0} fontSize={'sm'}>
                                     <Text fontWeight={600}>{doc.organizer}</Text>
                                     <Text color={'gray.500'}>{doc.contact}</Text>
@@ -174,21 +187,6 @@ function CardGrid(props){
                                         
                                     </MenuList>
                             </Menu>}
-                            {/*}
-                            {!props.isDashboard && 
-                                
-                                <Menu>
-                                    <MenuButton
-                                        bg="whiteAlpha"
-                                        as={IconButton}
-                                        aria-label='Options'
-                                        icon={<InfoOutlineIcon />}
-                                    />
-                                    <MenuList>
-                                        <MenuItem>Add to List&nbsp;&nbsp;<StarIcon/></MenuItem>                                   
-                                    </MenuList>
-                                </Menu>
-                            }*/}
                             </HStack>
                     </Box>
                     
@@ -298,13 +296,27 @@ function CardGrid(props){
             </AlertDialogContent>
             </AlertDialogOverlay>
         </AlertDialog>
-                            
+
+        <Modal onClose={onCloseProfile} isOpen={isOpenProfile} isCentered>
+            <ModalOverlay />
+            <ModalContent>
+            <ModalHeader id="profileName">Name</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+                <Text id="profileBio">Bio</Text>
+            </ModalBody>
+            <ModalFooter>
+                <Button onClick={onCloseProfile}>Close</Button>
+            </ModalFooter>
+            </ModalContent>
+        </Modal>
+         
         </>
     )
 }
 
+//Fills in modal information
 async function fillCardData(id){
-    console.log(1)
     const docRef = doc(db, "activities", id);
     const docSnap = await getDoc(docRef);
 
@@ -321,8 +333,21 @@ async function fillCardData(id){
     }
 }
 
+//Deletes a card
 async function deleteCard(id){
     await deleteDoc(doc(db, "activities", id));
+}
+
+//Fills in profile info
+async function fillProfileInfo(uid){
+    const docRef = doc(db, "users", uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()){
+        $("#profileName").html(docSnap.data().firstName + " "+ docSnap.data().lastName);
+        $("#profileBio").html(docSnap.data().bio);
+
+    }
 }
 
 export default CardGrid;

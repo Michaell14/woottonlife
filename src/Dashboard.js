@@ -6,14 +6,11 @@ import { getAuth } from "firebase/auth";
 const auth = getAuth();
 
 function Dashboard(){
-    
 
     return(
         <>  
-            
             <CardGrid isDashboard={true}/>
         </>
-        
     )
 }
 

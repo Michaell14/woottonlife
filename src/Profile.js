@@ -1,35 +1,61 @@
-import React, {useState} from 'react';
-import { Box, Text, Flex, Button, Input,HStack, FormControl, FormLabel,FormHelperText, Textarea } from '@chakra-ui/react';
+import React from 'react';
+import { Text, Flex, Button, Input,HStack, FormControl, FormLabel, useToast, Textarea } from '@chakra-ui/react';
 import { useColorMode } from '@chakra-ui/react'
-import { auth } from "./config";
+import { doc, getDoc, setDoc } from "firebase/firestore"; 
 import { getAuth, updateProfile, onAuthStateChanged  } from "firebase/auth";
+import { auth, db } from "./config";
+import $ from "jquery";
 
 function Profile(){
 
     const { colorMode, toggleColorMode } = useColorMode();
-    const [isAuth, setIsAuth] = useState(false);
-    const [ displayName, setDisplayName] = useState();
-    const [show, setShow] = React.useState(false)
-    const handleClick = () => setShow(!show)
+    const toast = useToast();
 
+    //Fills in profile information
+    async function setBio(uid){
+        const docRef = doc(db, "users", uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            $("#updateFirstName").val(docSnap.data().firstName);
+            $("#updateLastName").val(docSnap.data().lastName);
+            $("#updateBio").val(docSnap.data().bio);
+        }
+    }
+
+    //Fills in information when user is signed in
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            setDisplayName(user.displayName);
-            setIsAuth(true);
-        } else {
-            setIsAuth(false);
+            setBio(user.uid);
         }
       });
 
-
-    function updateDisplayName(){
+    //Updates a person's information
+    function updateDisplay(){
         const auth=getAuth();
-        const newDisplayName=document.getElementById("updateDisplayName").value;
+
+        const newFirstName=$("#updateFirstName").val();
+        const newLastName=$("#updateLastName").val();
+        const newBio = $("#updateBio").val();
     
         updateProfile(auth.currentUser, {
-            displayName: newDisplayName
+            displayName: newFirstName + " " + newLastName
         }).then(() =>{
-            alert("profile updated. Hello " + auth.currentUser.displayName);
+            const userRef = doc(db, 'users', auth.currentUser.uid);
+
+            setDoc(userRef, { 
+                firstName: newFirstName,
+                lastName: newLastName,
+                bio: newBio
+            }, { merge: true }).then(() => {
+                toast({
+                    title: 'Info saved',
+                    description: "We've saved your information for you.",
+                    status: 'success',
+                    duration: 9000,
+                    isClosable: true,
+                  })
+            });
         })
     }
 
@@ -40,33 +66,29 @@ function Profile(){
                 
                 <Text as='b' fontSize={"3xl"} >Edit Profile</Text>
 
+                <HStack mt={5}>
+                    <FormControl>       
+                        <FormLabel htmlFor='updateFirstName'>First Name</FormLabel>
+                        <Input id='updateFirstName'/>
+                    </FormControl>
+                    <FormControl>
+                        <FormLabel htmlFor='updateyLastName'>Last Name</FormLabel>
+                        <Input id='updateLastName'/>
+                    </FormControl>  
+                </HStack>
 
-                {isAuth && 
-                <FormControl mt={5}>
-                    <FormLabel htmlFor='updateDisplayName'>Display Name</FormLabel>
-
-                    <HStack>
-
-                        <Input id='updateDisplayName' placeholder={displayName}/>
-                        <Button onClick={updateDisplayName} >Submit</Button>
-                    </HStack>
-                    <FormHelperText>You should use your name.</FormHelperText>
-                </FormControl>}
-                
-                {isAuth &&
                 <FormControl mt={5}>
                     
-                    <FormLabel htmlFor='updatePassword'>Bio</FormLabel>
+                    <FormLabel htmlFor='updateBio'>Bio</FormLabel>
                     <Flex w={"100%"} justify={"space-between"}>
-                        <Textarea w={"385px"} h={"140px"} lineHeight={"26px"} placeholder='👋Hey, I am....
-🏂My hobbies include....'
-                        />
-                        <Button w={"75px"} onClick={updateDisplayName} >Submit</Button>
+                        <Textarea h={"140px"} lineHeight={"26px"} id="updateBio" />
                     </Flex>
                     
-                </FormControl>}
+                </FormControl>
 
-                <Button onClick={toggleColorMode} mt={10}>
+                <Button mt={5} colorScheme="green" onClick={updateDisplay} >Save</Button>
+
+                <Button onClick={toggleColorMode} mt={5}>
                     Toggle {colorMode === 'light' ? 'Dark' : 'Light'} Mode
                 </Button>
             </Flex>

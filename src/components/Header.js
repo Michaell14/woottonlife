@@ -124,17 +124,11 @@ function Header(){
                   <a href="/"><Text pr={5}>Discover</Text></a>
                   {isAuth && <a href="/dashboard"><Text pl={5}>Dashboard</Text></a>}
                 </Flex>
-                {/*}
-                <Center>
-                    <a href="/discover"><Button variant={"outline"} colorScheme={"whatsapp"} mr={6}>Discover</Button></a>
-                    {isAuth && <a href="/dashboard"><Button variant={"outline"} colorScheme={"red"}>Dashboard</Button></a>}
-    </Center>*/}
 
                 <Flex>
                     {isAuth && <Button onClick={onOpenAdd} colorScheme={"linkedin"} variant="outline" mr={7}><AddIcon/>&nbsp;Add Activity</Button>}
                     {!isAuth &&  
                       <Button onClick={onOpenLogin} colorScheme={"green"} id="Login">Log in</Button>}
-
 
                     {isAuth &&  
                     <Menu offset={[0, 40]}>
@@ -165,45 +159,44 @@ function Header(){
 
 
             <Modal isOpen={isOpenLogin} onClose={onCloseLogin}>
-                        <ModalOverlay />
-                        <ModalContent>
-                            <ModalHeader>Login</ModalHeader>
-                            <ModalCloseButton />
-                            <ModalBody pb={6}>
-                                <FormControl isRequired>
-                                    <FormLabel>Email</FormLabel>
-                                    <Input id="LoginEmail" placeholder='Wootton@patriot.com' />
-                                </FormControl>
+              <ModalOverlay />
+              <ModalContent>
+                  <ModalHeader>Login</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody pb={6}>
+                      <FormControl isRequired>
+                        <FormLabel>Email</FormLabel>
+                        <Input id="LoginEmail" placeholder='Wootton@patriot.com' />
+                      </FormControl>
 
-                                <FormControl mt={4} isRequired>
-                                    <FormLabel>Password</FormLabel>
+                      <FormControl mt={4} isRequired>
+                        <FormLabel>Password</FormLabel>
+                          <InputGroup size='md'>
+                            <Input
+                              pr='4.5rem'
+                              type={showLogin ? 'text' : 'password'}
+                              placeholder='**********'
+                              id="LoginPassword"
+                            />
+                            <InputRightElement width='4.5rem'>
+                              <Button h='1.75rem' size='sm' onClick={handleClickLogin}>
+                                {showLogin ? 'Hide' : 'Show'}
+                              </Button>
+                            </InputRightElement>
+                          </InputGroup>
+                      </FormControl>
 
-                                    <InputGroup size='md'>
-                                      <Input
-                                        pr='4.5rem'
-                                        type={showLogin ? 'text' : 'password'}
-                                        placeholder='**********'
-                                        id="LoginPassword"
-                                      />
-                                      <InputRightElement width='4.5rem'>
-                                        <Button h='1.75rem' size='sm' onClick={handleClickLogin}>
-                                          {showLogin ? 'Hide' : 'Show'}
-                                        </Button>
-                                      </InputRightElement>
-                                    </InputGroup>
-                                </FormControl>
+                      {showLoginError && <FormLabel mt={2}><Text color={"red"} fontSize={"sm"}>Account does not exist</Text></FormLabel>}
+                        <FormLabel mt={3}>Don't have an account? <Text as="u"><a href="/signup">Sign Up</a></Text></FormLabel>
+                    </ModalBody>
+                  <ModalFooter>
+                  <Button onClick={login} colorScheme='green' mr={3}>Submit</Button>
+                      <Button onClick={function(){onCloseLogin(); setLoginError(false)}}>Cancel</Button>
+                  </ModalFooter>
+              </ModalContent>
+            </Modal>
 
-                                {showLoginError && <FormLabel mt={2}><Text color={"red"} fontSize={"sm"}>Account does not exist</Text></FormLabel>}
-                                  <FormLabel mt={3}>Don't have an account? <Text as="u"><a href="/signup">Sign Up</a></Text></FormLabel>
-                            </ModalBody>
-                            <ModalFooter>
-                            <Button onClick={login} colorScheme='green' mr={3}>Submit</Button>
-                                <Button onClick={function(){onCloseLogin(); setLoginError(false)}}>Cancel</Button>
-                            </ModalFooter>
-                        </ModalContent>
-                    </Modal>
-
-                    <Modal isOpen={isOpenAdd} onClose={onCloseAdd} size={"lg"}>
+                <Modal isOpen={isOpenAdd} onClose={onCloseAdd} size={"lg"}>
             
                 <ModalOverlay />
                 <ModalContent>
@@ -288,12 +281,13 @@ function Header(){
     )
 }
 
+//Logs a user out
 function logOut(){
-    signOut(auth).then(() => {
-      }).catch((error) => {
-        console.log(error);
-        console.log("Error with signing out")
-      });
+  signOut(auth).then(() => {
+    }).catch((error) => {
+      console.log(error);
+      console.log("Error with signing out")
+    });
 }
 
 
