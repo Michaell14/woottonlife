@@ -1,16 +1,25 @@
 import React from 'react'; 
-import { updateProfile , createUserWithEmailAndPassword  } from "firebase/auth";
+import { updateProfile , createUserWithEmailAndPassword, sendSignInLinkToEmail, isSignInWithEmailLink,signInWithEmailLink, reload  } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore"; 
-import { auth, db } from "./config";
+import { db } from "./config";
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import $ from "jquery";
-import { Flex, Box, FormControl, FormLabel, Input, InputGroup, HStack,InputRightElement,Stack,Button,Heading,Text,useColorModeValue} from '@chakra-ui/react';
+import { getAuth } from "firebase/auth";
+import { Flex, Box, FormControl, FormLabel, Input, InputGroup, useToast,HStack,InputRightElement,Stack,Button,Heading,Text,useColorModeValue} from '@chakra-ui/react';
 
+const actionCodeSettings = {
+  // URL you want to redirect back to. The domain (www.example.com) for this
+  // URL must be in the authorized domains list in the Firebase Console.
+  url: 'http://localhost:3000/',
+  handleCodeInApp: true,
+
+};
+var auth=getAuth();
 function SignUp(){
     let navigate = useNavigate();
-    
+    const toast = useToast()
     //Creates a new user and adds them to firebase
     async function addNewUser(uid, firstName, lastName, bio, email, password){
       await setDoc(doc(db, "users", uid), {
@@ -33,19 +42,46 @@ function SignUp(){
         .then((userCredential) => {
             // Signed in 
             const user = userCredential.user;
-    
+
+            console.log(email)
+
+            toast({
+              title: 'Account created.',
+              description: "We've sent a verification email.",
+              status: 'success',
+              duration: 6000,
+              isClosable: true,
+              position: "top-right"
+            })
+            
             updateProfile(user, {
                 displayName: firstName + " " + lastName,
                 photoURL: "https://source.boringavatars.com/beam/40/"+firstName+"%20"+lastName
 
               }).then(() => {
-                // Update successful
-                $("displayName").html("Welcome " + user.displayName)
+                
                 navigate("/", { replace: true });
-
+                window.location.reload();
                 //Adds user
                 addNewUser(user.uid, firstName, lastName, "👋Hey, I am....🏂My hobbies include....", email, password)
-              })          
+              })   
+              
+              //Sends them a verification email
+            sendSignInLinkToEmail(auth, email, actionCodeSettings)
+            .then(() => {
+              console.log("Log in was successful")
+              // The link was successfully sent. Inform the user.
+              // Save the email locally so you don't need to ask the user for it again
+              // if they open the link on the same device.
+              window.localStorage.setItem('emailForSignIn', email);
+              // ...
+            })
+            .catch((error) => {
+              const errorCode = error.code;
+              const errorMessage = error.message;
+              console.log(errorCode);
+              console.log(errorMessage);
+            });
         })
         .catch((error) => {
             const errorCode = error.code;

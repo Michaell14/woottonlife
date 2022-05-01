@@ -1,13 +1,5 @@
-import { Box, Text, Select, Textarea, Flex, Button, Menu, MenuButton, IconButton, useColorMode, MenuItem, MenuList, InputGroup, Avatar, InputRightElement, Input,useDisclosure, Image, FormControl, FormLabel, HStack, useRadioGroup, useRadio } from '@chakra-ui/react';
-import {
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalFooter,
-    ModalBody,
-    ModalCloseButton,
-  } from '@chakra-ui/react'
+import { Box, Text, Select, Textarea, Flex, Button, Menu, MenuButton, IconButton, createStandaloneToast , MenuItem, MenuList, InputGroup, Avatar, InputRightElement, Input,useDisclosure, Image, FormControl, FormLabel, HStack, useRadioGroup, useRadio } from '@chakra-ui/react';
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton } from '@chakra-ui/react'
 import React, {useState} from 'react'; 
 import { AddIcon } from '@chakra-ui/icons';
 import DatePicker from "react-datepicker";
@@ -18,6 +10,8 @@ import { signInWithEmailAndPassword, signOut, onAuthStateChanged  } from "fireba
 import { auth, db, storage } from "../config";
 import { useNavigate } from "react-router-dom";
 import $ from "jquery";
+
+const toast = createStandaloneToast()
 
 function Header(){
     let navigate = useNavigate();
@@ -126,9 +120,8 @@ function Header(){
                 </Flex>
 
                 <Flex>
-                    {isAuth && <Button onClick={onOpenAdd} colorScheme={"green"} variant="outline" mr={7}><AddIcon/>&nbsp;Add Activity</Button>}
-                    {!isAuth &&  
-                      <Button onClick={onOpenLogin} colorScheme={"green"} id="Login">Log in</Button>}
+                    {isAuth && <Button onClick={function(){isVerified();onOpenAdd();}} colorScheme={"green"} variant="outline" mr={7}><AddIcon/>&nbsp;Add Activity</Button>}
+                    {!isAuth && <Button onClick={onOpenLogin} colorScheme={"green"} id="Login">Log in</Button>}
 
                     {isAuth &&  
                     <Menu offset={[0, 40]}>
@@ -287,6 +280,19 @@ function logOut(){
       console.log(error);
       console.log("Error with signing out")
     });
+}
+
+function isVerified(){
+  if (!auth.currentUser.emailVerified){
+    toast({
+      title: 'Unverified Account',
+      description: 'You will be unable to create a post until you verify your email.',
+      status: 'warning',
+      duration: 6000,
+      isClosable: true,
+      position: "top-right"
+    })
+  }
 }
 
 

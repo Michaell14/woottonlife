@@ -310,7 +310,6 @@ function CardGrid(props){
             </ModalFooter>
             </ModalContent>
         </Modal>
-         
         </>
     )
 }
@@ -346,7 +345,6 @@ async function fillProfileInfo(uid){
     if (docSnap.exists()){
         $("#profileName").html(docSnap.data().firstName + " "+ docSnap.data().lastName);
         $("#profileBio").html(docSnap.data().bio);
-
     }
 }
 
