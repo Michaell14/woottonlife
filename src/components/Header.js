@@ -6,7 +6,7 @@ import DatePicker from "react-datepicker";
 import FileUpload from "../FileUpload";
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc } from "firebase/firestore";
-import { signInWithEmailAndPassword, signOut, onAuthStateChanged  } from "firebase/auth";
+import { signInWithEmailAndPassword, signOut, onAuthStateChanged, getAuth  } from "firebase/auth";
 import { auth, db, storage } from "../config";
 import { useNavigate } from "react-router-dom";
 import $ from "jquery";
@@ -112,7 +112,6 @@ function Header(){
 
     return(
         <>
-
             <Flex justify={"space-between"} px={"65px"} py={10}>
                 <Flex>
                   <a href="/"><Text id="discover" pr={5}>Discover</Text></a>
@@ -283,7 +282,9 @@ function logOut(){
 }
 
 function isVerified(){
-  if (!auth.currentUser.emailVerified){
+  console.log(1)
+  console.log(auth.currentUser.emailVerified)
+  if (!getAuth().currentUser.emailVerified){
     toast({
       title: 'Unverified Account',
       description: 'You will be unable to create a post until you verify your email.',
@@ -294,67 +295,6 @@ function isVerified(){
     })
   }
 }
-
-
-// 1. Create a component that consumes the `useRadio` hook
-function RadioCard(props) {
-    const { getInputProps, getCheckboxProps } = useRadio(props)
-  
-    const input = getInputProps()
-    const checkbox = getCheckboxProps()
-  
-    return (
-      <Box as='label'>
-        <input {...input} />
-        <Box
-          {...checkbox}
-          cursor='pointer'
-          borderWidth='1px'
-          borderRadius='md'
-          boxShadow='md'
-          _checked={{
-            bg: 'teal.600',
-            color: 'white',
-            borderColor: 'teal.600',
-          }}
-          _focus={{
-            boxShadow: 'outline',
-          }}
-          px={4}
-          py={2}
-        >
-          {props.children}
-        </Box>
-      </Box>
-    )
-  }
-
-  
-// Step 2: Use the `useRadioGroup` hook to control a group of custom radios.
-function Tabs() {
-    const options = ['Athletics', 'Clubs', 'Resources', "Gallery"]
-
-    const { getRootProps, getRadioProps } = useRadioGroup({
-        name: 'tab',
-        defaultValue: 'Home',
-    })
-
-    const group = getRootProps()
-
-    return (
-        <HStack {...group}>
-        {options.map((value) => {
-            const radio = getRadioProps({ value })
-            return (
-            <RadioCard key={value} {...radio}>
-                {value}
-            </RadioCard>
-            )
-        })}
-        </HStack>
-    )
-}
-
 
 
 export default Header;

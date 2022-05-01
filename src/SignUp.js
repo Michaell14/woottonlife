@@ -7,25 +7,25 @@ import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import $ from "jquery";
 import { getAuth } from "firebase/auth";
-import { Flex, Box, FormControl, FormLabel, Input, InputGroup, useToast,HStack,InputRightElement,Stack,Button,Heading,Text,useColorModeValue} from '@chakra-ui/react';
+import { Flex, Box, FormControl, FormLabel, FormHelperText, Input, InputGroup, useToast,HStack,InputRightElement,Stack,Button,Heading,Text,useColorModeValue} from '@chakra-ui/react';
 
 const actionCodeSettings = {
   // URL you want to redirect back to. The domain (www.example.com) for this
   // URL must be in the authorized domains list in the Firebase Console.
-  url: 'https://woottonlife.vercel.app/',
+  url: 'http://localhost:3000/',
   handleCodeInApp: true,
-
 };
+
 var auth=getAuth();
 function SignUp(){
     let navigate = useNavigate();
-    const toast = useToast()
+
     //Creates a new user and adds them to firebase
-    async function addNewUser(uid, firstName, lastName, bio, email, password){
+    async function addNewUser(uid, firstName, lastName, email, password){
       await setDoc(doc(db, "users", uid), {
         firstName: firstName,
         lastName: lastName,
-        bio: bio,
+        bio: "👋Hey, I am....🏂My hobbies include....",
         email: email,
         password: password
       });
@@ -41,30 +41,7 @@ function SignUp(){
         createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             // Signed in 
-            const user = userCredential.user;
-
-            console.log(email)
-
-            toast({
-              title: 'Account created.',
-              description: "We've sent a verification email.",
-              status: 'success',
-              duration: 6000,
-              isClosable: true,
-              position: "top-right"
-            })
-            
-            updateProfile(user, {
-                displayName: firstName + " " + lastName,
-                photoURL: "https://source.boringavatars.com/beam/40/"+firstName+"%20"+lastName
-
-              }).then(() => {
-                
-                navigate("/", { replace: true });
-                window.location.reload();
-                //Adds user
-                addNewUser(user.uid, firstName, lastName, "👋Hey, I am....🏂My hobbies include....", email, password)
-              })   
+            const user = userCredential.user;   
               
               //Sends them a verification email
             sendSignInLinkToEmail(auth, email, actionCodeSettings)
@@ -75,6 +52,17 @@ function SignUp(){
               // if they open the link on the same device.
               window.localStorage.setItem('emailForSignIn', email);
               // ...
+                updateProfile(user, {
+                  displayName: firstName + " " + lastName,
+                  photoURL: "https://source.boringavatars.com/beam/40/"+firstName+"%20"+lastName
+
+                }).then(() => {
+                //Adds user
+                  addNewUser(user.uid, firstName, lastName, email, password)
+
+                  navigate("/", { replace: true });
+                  window.location.reload();
+              })
             })
             .catch((error) => {
               const errorCode = error.code;
@@ -151,6 +139,7 @@ function SignUp(){
                   </Button>
                 </InputRightElement>
               </InputGroup>
+              <FormHelperText>We will send you a verification email.</FormHelperText>
             </FormControl>
             <Stack spacing={10} pt={2}>
               <Button
