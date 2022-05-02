@@ -7,8 +7,8 @@ import {
     useColorModeValue,
     VisuallyHidden,
   } from '@chakra-ui/react';
-import { FaInstagram, FaTwitter, FaYoutube,FaSafari, FaChrome } from 'react-icons/fa';
-import React, { ReactNode } from 'react';
+import { FaInstagram, FaYoutube, FaChrome } from 'react-icons/fa';
+import React from 'react';
   
 class SocialButton extends React.Component{
 

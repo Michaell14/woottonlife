@@ -1,6 +1,6 @@
 import { Box, Text, Select, Textarea, Flex, Button, Menu, MenuButton, IconButton, createStandaloneToast , MenuItem, MenuList, InputGroup, Avatar, InputRightElement, Input,useDisclosure, Image, FormControl, FormLabel, HStack, useRadioGroup, useRadio } from '@chakra-ui/react';
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton } from '@chakra-ui/react'
-import React, {useState} from 'react'; 
+import React, {useState, useEffect} from 'react'; 
 import { AddIcon } from '@chakra-ui/icons';
 import DatePicker from "react-datepicker";
 import FileUpload from "../FileUpload";
@@ -10,6 +10,7 @@ import { signInWithEmailAndPassword, signOut, onAuthStateChanged, getAuth  } fro
 import { auth, db, storage } from "../config";
 import { useNavigate } from "react-router-dom";
 import $ from "jquery";
+import { findAllByAltText } from '@testing-library/react';
 
 const toast = createStandaloneToast()
 
@@ -28,6 +29,7 @@ function Header(){
     const handleClickLogin = () => setShowLogin(!showLogin);
     const [profileSrc, setProfilePic] = useState(null);
     
+    
     onAuthStateChanged(auth, (user) => {
       
       //Sets the display name when there is a user
@@ -41,9 +43,12 @@ function Header(){
     });
 
     function login(){
-        const email = document.getElementById("LoginEmail").value;
-        const password = document.getElementById("LoginPassword").value;
-        signInWithEmailAndPassword(auth, email, password)
+        const email = $("#LoginEmail").val();
+        const password = $("#LoginPassword").val();
+        console.log(email);
+        console.log(password);
+
+        signInWithEmailAndPassword(getAuth(), email, password)
         .then((userCredential) => {
           // Signed in 
             const user = userCredential.user;
@@ -52,13 +57,22 @@ function Header(){
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
-          if (errorCode=="auth/user-not-found"){
+          if (errorCode=="auth/user-not-found" || errorCode=="auth/wrong-password"){
             setLoginError(true);
           }
+
+
+          console.log(errorCode);
+          console.log(errorMessage);
         });
     }
 
     async function sendData(){
+      console.log(1234)
+      if (!isVerified()){
+        return;
+      }
+      console.log(234)
       if ($("#name").val()=="" || $("#time").val()=="Choose Time" || $("#activityType").val()=="Choose Activity" || $("#description").val()=="" || $("#organizer").val()=="" || $("#contact").val()=="" || toSend==null){
         setSubmitError(true);
         return;
@@ -177,7 +191,7 @@ function Header(){
                           </InputGroup>
                       </FormControl>
 
-                      {showLoginError && <FormLabel mt={2}><Text color={"red"} fontSize={"sm"}>Account does not exist</Text></FormLabel>}
+                      {showLoginError && <FormLabel mt={2}><Text color={"red"} fontSize={"sm"}>Incorrect email or password</Text></FormLabel>}
                         <FormLabel mt={3}>Don't have an account? <Text as="u"><a href="/signup">Sign Up</a></Text></FormLabel>
                     </ModalBody>
                   <ModalFooter>
@@ -281,10 +295,9 @@ function logOut(){
     });
 }
 
+//Checks if the user's account is email verified
 function isVerified(){
-  console.log(1)
-  console.log(auth.currentUser.emailVerified)
-  if (!getAuth().currentUser.emailVerified){
+  if (!auth.currentUser.emailVerified){
     toast({
       title: 'Unverified Account',
       description: 'You will be unable to create a post until you verify your email.',
@@ -293,7 +306,10 @@ function isVerified(){
       isClosable: true,
       position: "top-right"
     })
+
+    return false;
   }
+  return true;
 }
 
 

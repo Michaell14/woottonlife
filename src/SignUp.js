@@ -1,22 +1,14 @@
 import React from 'react'; 
-import { updateProfile , createUserWithEmailAndPassword, sendSignInLinkToEmail, isSignInWithEmailLink,signInWithEmailLink, reload  } from "firebase/auth";
+import { updateProfile , createUserWithEmailAndPassword, sendSignInLinkToEmail, isSignInWithEmailLink,signInWithEmailLink, reload, sendEmailVerification  } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore"; 
-import { db } from "./config";
+import { db, auth } from "./config";
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import $ from "jquery";
-import { getAuth } from "firebase/auth";
 import { Flex, Box, FormControl, FormLabel, FormHelperText, Input, InputGroup, useToast,HStack,InputRightElement,Stack,Button,Heading,Text,useColorModeValue} from '@chakra-ui/react';
 
-const actionCodeSettings = {
-  // URL you want to redirect back to. The domain (www.example.com) for this
-  // URL must be in the authorized domains list in the Firebase Console.
-  url: 'https://woottonlife.vercel.app/',
-  handleCodeInApp: true,
-};
 
-var auth=getAuth();
 function SignUp(){
     let navigate = useNavigate();
 
@@ -28,6 +20,9 @@ function SignUp(){
         bio: "👋Hey, I am....🏂My hobbies include....",
         email: email,
         password: password
+      }).then(() => {
+          navigate("/", { replace: true });
+          window.location.reload();
       });
     }
     
@@ -44,13 +39,8 @@ function SignUp(){
             const user = userCredential.user;   
               
               //Sends them a verification email
-            sendSignInLinkToEmail(auth, email, actionCodeSettings)
+            sendEmailVerification(user)
             .then(() => {
-              console.log("Log in was successful")
-              // The link was successfully sent. Inform the user.
-              // Save the email locally so you don't need to ask the user for it again
-              // if they open the link on the same device.
-              window.localStorage.setItem('emailForSignIn', email);
               // ...
                 updateProfile(user, {
                   displayName: firstName + " " + lastName,
@@ -59,9 +49,6 @@ function SignUp(){
                 }).then(() => {
                 //Adds user
                   addNewUser(user.uid, firstName, lastName, email, password)
-
-                  navigate("/", { replace: true });
-                  window.location.reload();
               })
             })
             .catch((error) => {

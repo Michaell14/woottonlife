@@ -4,7 +4,6 @@ import CardGrid from "./components/CardGrid"
 import { getAuth } from "firebase/auth";
 import $ from "jquery";
 
-const auth = getAuth();
 
 function Dashboard(){
 

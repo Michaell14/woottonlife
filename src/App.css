@@ -5,11 +5,7 @@
     padding:0;
 }
 
-#T1{
-    font-family: 'Inconsolata', monospace;
-}
-
-#T2{
+#T1, #T2{
     font-family: 'Inconsolata', monospace;
 }
 

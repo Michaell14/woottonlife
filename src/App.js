@@ -4,22 +4,7 @@ import { Box, Text, Button, useDisclosure, useToast } from '@chakra-ui/react';
 import CardGrid from "./components/CardGrid";
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton } from '@chakra-ui/react'
 import $ from "jquery";
-import { getAuth, isSignInWithEmailLink, signInWithEmailLink } from "firebase/auth";
 import {auth} from "./config";
-
-if (isSignInWithEmailLink(auth, window.location.href)) {
-  let email = window.localStorage.getItem('emailForSignIn');
-  if (!email) {
-    email = window.prompt('Please provide your email for confirmation');
-  }
-  // The client SDK will parse the code from the link for you.
-  signInWithEmailLink(auth, email, window.location.href)
-    .then((result) => {
-      // Clear email from storage.
-      window.localStorage.removeItem('emailForSignIn');
-      auth.currentUser.emailVerified=true;
-    })
-}
 
 
 function App() {
