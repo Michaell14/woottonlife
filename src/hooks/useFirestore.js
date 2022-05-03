@@ -16,27 +16,23 @@ const app = initializeApp(firebaseConfig);
 const db=getFirestore();
 const auth = getAuth();
 
-function useFirestore(collect, isDashboard){
+function useFirestore(collect, isDashboard, filters){
     const [docs, setDocs] = useState([]);
 
     useEffect(() => {
-        let uid=null;
-        
-
 
         let q = query(collection(db, collect));
 
         if (auth.currentUser){
             q = query(collection(db, collect), where("uid", "==", auth.currentUser.uid));
         }
-            
         const unsub = onSnapshot(q, (querySnapshot) => {
             let documents = [];
             querySnapshot.forEach((doc) => {
                 if (isDashboard && doc.data().uid == auth.currentUser.uid || !isDashboard){
                     documents.push({...doc.data(), id: doc.id});
+                    
                 }
-                
             });
 
         setDocs(documents);
@@ -44,7 +40,6 @@ function useFirestore(collect, isDashboard){
         return () => unsub();
 
     }, [collection])
-
     return {docs};
 }
 

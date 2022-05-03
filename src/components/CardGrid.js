@@ -1,14 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import $ from "jquery"
 import DatePicker from "react-datepicker";
 import FileUpload from "../FileUpload";
 import {db} from "../config";
 
 //import Chakra UI components
-import { Box, Image, HStack, Flex, Menu, MenuButton, IconButton, Grid, Stack, Heading, Select, Text, Button, FormControl, FormLabel, Input,MenuList, Textarea, MenuItem  } from '@chakra-ui/react';
+import { Box, Image, HStack, Flex, IconButton, Grid, Stack, Heading, Select, Text, Button, FormControl, FormLabel, Input, Textarea, filter  } from '@chakra-ui/react';
 import { useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton} from '@chakra-ui/react';
 import { AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay, } from '@chakra-ui/react'
 import { SettingsIcon } from "@chakra-ui/icons";
+import { BsFilter } from "react-icons/bs";
+import {
+    Menu,
+    MenuButton,
+    MenuList,
+    MenuItem,
+    MenuItemOption,
+    MenuGroup,
+    MenuOptionGroup,
+    MenuDivider,
+  } from '@chakra-ui/react'
 
 //import firebase libraries
 import useFirestore from "../hooks/useFirestore";
@@ -20,14 +31,42 @@ const storage = getStorage();
 function CardGrid(props){
     const [startDate, setStartDate] = useState(null);
     const [deleteDocId, setDeleteDocId] = useState(null);
-    const { docs } = useFirestore("activities", props.isDashboard);
-
+    const [filters, setFilter] =useState(["Club", "Sports", "Academic", "Miscellaneous"]);
+    const [sortType, setSortType] = useState("Recent");
+ 
     //Modal disclosures
     const { isOpen: isOpenAdd, onOpen: onOpenAdd, onClose: onCloseAdd } = useDisclosure()
     const { isOpen: isOpenProfile, onOpen: onOpenProfile, onClose: onCloseProfile } = useDisclosure()
     const { isOpen: isOpenDeleteDialog, onOpen: onOpenDeleteDialog, onClose: onCloseDeleteDialog } = useDisclosure()
     const [toSend, setFile] = useState(null);
     const cancelRef = React.useRef()
+
+    var {docs}=useFirestore("activities", props.isDashboard);
+
+    //Sort function
+    function sortCards(a,b){
+        if (sortType=="Recent"){
+            return b.uploadDate-a.uploadDate;
+        }else if (sortType=="Oldest"){
+            return a.uploadDate-b.uploadDate;
+        }else if (sortType=="Popular"){
+            return a.follows-b.follows;
+        }else if (sortType=="Alphabetical"){
+            return a.title.localeCompare(b.title);
+        }
+    }
+
+    //Sets a filter
+    function addFilter(filter){
+        if (filters.includes(filter)){
+            const index=filters.indexOf(filter);
+            const temp = [...filters];
+            temp.splice(index, 1);
+            setFilter(temp);
+        }else{
+            setFilter(filters => [...filters, filter])
+        }
+      }
 
     //Edits card data
     async function editData(){
@@ -79,12 +118,36 @@ function CardGrid(props){
             console.error("Error adding document: ", e);
           }
     }
-
+    
     return(
         <>
+            <Box w={"100%"} pl={"65px"} pb={5}>
+                <Menu closeOnSelect={false}>
+                <MenuButton
+                as={IconButton}
+                aria-label='Options'
+                icon={<BsFilter size={20}/>}
+                variant='outline'
+            />
+            <MenuList minWidth='240px'>
+                <MenuOptionGroup title='Order' onChange={(e) => setSortType(e)} defaultValue={"Recent"} type='radio'>
+                    <MenuItemOption value='Recent'>Recent</MenuItemOption>
+                    <MenuItemOption value='Oldest'>Oldest</MenuItemOption>
+                    <MenuItemOption value='Popular'>Popular</MenuItemOption>
+                    <MenuItemOption value='Alphabetical'>Alphabetical</MenuItemOption>
+                </MenuOptionGroup>
+                <MenuDivider />
+                <MenuOptionGroup defaultValue={["Club", "Sports", "Academic", "Miscellaneous"]} title='Activity Type' type='checkbox'>
+                    <MenuItemOption onClick={() => addFilter("Club")} isChecked={true} value='Club'>Club</MenuItemOption>
+                    <MenuItemOption onClick={() => addFilter("Sports")} value='Sports'>Sports</MenuItemOption>
+                    <MenuItemOption onClick={() => addFilter("Academic")} value='Academic'>Academic</MenuItemOption>
+                    <MenuItemOption onClick={() => addFilter("Miscellaneous")} value='Miscellaneous'>Miscellaneous</MenuItemOption>
+                </MenuOptionGroup>
+            </MenuList>
+            </Menu></Box>
             <Grid templateColumns='repeat(4, 1fr)' gap={10} mx={"65px"} mb={"100px"}>
-                { docs && docs.map(doc => (
-
+                { docs && docs.filter((doc) => {if (filters.includes(doc.activityType)){return doc;}}).sort(sortCards).map(doc => (
+                     
                     <Box key={doc.id} maxW={'460px'} position={"relative"} minW={"240px"} h={"fit-content"} w={'full'} bg="white" _dark={{bg: 'gray.900'}} p={6}
                         boxShadow={'2xl'}
                         rounded={'md'}

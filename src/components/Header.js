@@ -10,8 +10,8 @@ import { signInWithEmailAndPassword, signOut, onAuthStateChanged, getAuth  } fro
 import { auth, db, storage } from "../config";
 import { useNavigate } from "react-router-dom";
 import $ from "jquery";
-import { findAllByAltText } from '@testing-library/react';
 
+const d=new Date();
 const toast = createStandaloneToast()
 
 function Header(){
@@ -72,7 +72,7 @@ function Header(){
       if (!isVerified()){
         return;
       }
-      console.log(234)
+
       if ($("#name").val()=="" || $("#time").val()=="Choose Time" || $("#activityType").val()=="Choose Activity" || $("#description").val()=="" || $("#organizer").val()=="" || $("#contact").val()=="" || toSend==null){
         setSubmitError(true);
         return;
@@ -105,7 +105,9 @@ function Header(){
                       contact: $("#contact").val(),
                       profileSrc: profileSrc,
                       uid: userId,
-                      src: url
+                      src: url,
+                      uploadDate: d.getTime(),
+                      likes: 0
                   }).then(function() {
                     onCloseAdd();
                     setFile(null)
@@ -241,7 +243,7 @@ function Header(){
                               <option value='Club'>Club</option>
                               <option value='Sports'>Sports</option>
                               <option value='Academic'>Academic</option>
-                              <option value='Miscellaneous'>miscellaneous</option>
+                              <option value='Miscellaneous'>Miscellaneous</option>
                           </Select>
                       </FormControl>
 
@@ -256,7 +258,7 @@ function Header(){
                     </FormControl>
 
                     <FormControl mt={4} isRequired>
-                        <FormLabel>Organizer(s)</FormLabel>
+                        <FormLabel>Event Organizer(s)</FormLabel>
                         <Input placeholder='Phineas and Ferb' id="organizer"/>
                     </FormControl>
 

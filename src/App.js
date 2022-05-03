@@ -2,9 +2,8 @@ import './App.css';
 import React, {useEffect} from 'react';
 import { Box, Text, Button, useDisclosure, useToast } from '@chakra-ui/react';
 import CardGrid from "./components/CardGrid";
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton } from '@chakra-ui/react'
+import { Modal, ModalOverlay, ModalContent, IconButton, ModalHeader, ModalFooter, ModalBody, ModalCloseButton } from '@chakra-ui/react'
 import $ from "jquery";
-import {auth} from "./config";
 
 
 function App() {
@@ -51,11 +50,12 @@ function App() {
           </ModalFooter>
         </ModalContent>
       </Modal>
-
+      
       <CardGrid isDashboard={false}/>
 
     </Box>
   );
 }
+
 
 export default App;
