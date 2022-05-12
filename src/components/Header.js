@@ -68,7 +68,6 @@ function Header(){
     }
 
     async function sendData(){
-      console.log(1234)
       if (!isVerified()){
         return;
       }
@@ -107,7 +106,7 @@ function Header(){
                       uid: userId,
                       src: url,
                       uploadDate: d.getTime(),
-                      likes: 0
+                      list: []
                   }).then(function() {
                     onCloseAdd();
                     setFile(null)

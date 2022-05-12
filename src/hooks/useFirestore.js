@@ -16,7 +16,7 @@ const app = initializeApp(firebaseConfig);
 const db=getFirestore();
 const auth = getAuth();
 
-function useFirestore(collect, isDashboard, filters){
+function useFirestore(collect, isDashboard){
     const [docs, setDocs] = useState([]);
 
     useEffect(() => {

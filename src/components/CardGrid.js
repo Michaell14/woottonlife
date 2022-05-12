@@ -2,13 +2,15 @@ import React, { useEffect, useState } from "react";
 import $ from "jquery"
 import DatePicker from "react-datepicker";
 import FileUpload from "../FileUpload";
-import {db} from "../config";
+import {db, auth} from "../config";
+import { onAuthStateChanged } from "firebase/auth";
 
 //import Chakra UI components
-import { Box, Image, HStack, Flex, IconButton, Grid, Stack, Heading, Select, Text, Button, FormControl, FormLabel, Input, Textarea, filter  } from '@chakra-ui/react';
+import { Box, Image, HStack, Flex, IconButton, Grid, Stack, Heading, Select, Text, Button, FormControl, FormLabel, Input, Textarea, filter, Icon  } from '@chakra-ui/react';
 import { useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton} from '@chakra-ui/react';
 import { AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay, } from '@chakra-ui/react'
 import { SettingsIcon } from "@chakra-ui/icons";
+import {FiHeart} from "react-icons/fi";
 import { BsFilter } from "react-icons/bs";
 import {
     Menu,
@@ -23,7 +25,7 @@ import {
 
 //import firebase libraries
 import useFirestore from "../hooks/useFirestore";
-import { doc, getDoc, setDoc, deleteDoc,collection } from "firebase/firestore";
+import { doc, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const storage = getStorage();
@@ -33,6 +35,7 @@ function CardGrid(props){
     const [deleteDocId, setDeleteDocId] = useState(null);
     const [filters, setFilter] =useState(["Club", "Sports", "Academic", "Miscellaneous"]);
     const [sortType, setSortType] = useState("Recent");
+    const [isAuth, setIsAuth] = useState(true);
  
     //Modal disclosures
     const { isOpen: isOpenAdd, onOpen: onOpenAdd, onClose: onCloseAdd } = useDisclosure()
@@ -43,6 +46,16 @@ function CardGrid(props){
 
     var {docs}=useFirestore("activities", props.isDashboard);
 
+    onAuthStateChanged(auth, (user) => {
+        //Sets the display name when there is a user
+        if (user) {
+            setIsAuth(true);
+            
+        } else {
+            setIsAuth(false);
+        }
+      });
+
     //Sort function
     function sortCards(a,b){
         if (sortType=="Recent"){
@@ -50,9 +63,26 @@ function CardGrid(props){
         }else if (sortType=="Oldest"){
             return a.uploadDate-b.uploadDate;
         }else if (sortType=="Popular"){
-            return a.follows-b.follows;
+            return b.list.length-a.list.length;
         }else if (sortType=="Alphabetical"){
             return a.title.localeCompare(b.title);
+        }
+    }
+
+    //Adds an activity to the user's liked activities
+    async function likeActivity(docId){
+        const userRef=doc(db, "activities", docId);
+        const docSnap = await getDoc(userRef);
+        if (docSnap.exists()){
+            if (docSnap.data().list.includes(auth.currentUser.uid)){
+                await updateDoc(userRef, {
+                    list: arrayRemove(auth.currentUser.uid)
+                });
+            }else{
+                await updateDoc(userRef, {
+                    list: arrayUnion(auth.currentUser.uid)
+                })
+            }
         }
     }
 
@@ -145,7 +175,9 @@ function CardGrid(props){
                 </MenuOptionGroup>
             </MenuList>
             </Menu></Box>
-            <Grid templateColumns='repeat(4, 1fr)' gap={10} mx={"65px"} mb={"100px"}>
+
+
+            <Grid templateColumns='repeat(4, 1fr)' gap={10} mx={"65px"} mb={"100px"} overflow={"wrap"}>
                 { docs && docs.filter((doc) => {if (filters.includes(doc.activityType)){return doc;}}).sort(sortCards).map(doc => (
                      
                     <Box key={doc.id} maxW={'460px'} position={"relative"} minW={"240px"} h={"fit-content"} w={'full'} bg="white" _dark={{bg: 'gray.900'}} p={6}
@@ -230,6 +262,22 @@ function CardGrid(props){
                                 </Stack>
                             </Stack>
                             
+                            {isAuth && 
+                                <Button
+                                as={IconButton}
+                                aria-label='Options'
+                                icon={<FiHeart size={"17px"} fill={doc.list.includes(auth.currentUser.uid) ? "#e31b23" : "rgba(0,0,0,0)"}/>}
+                                variant="ghost"
+                                position={"absolute"} top={3} right={3}
+                                size={"xs"}
+                                h={8}
+                                color={"#e31b23"}
+
+                                onClick={function() {likeActivity(doc.id)}}
+                            />
+
+                            }
+
                             {props.isDashboard &&
                                 <Menu>
                                     <MenuButton
@@ -249,7 +297,7 @@ function CardGrid(props){
                                         </MenuItem>
                                         
                                     </MenuList>
-                            </Menu>}
+                                </Menu>}
                             </HStack>
                     </Box>
                     
